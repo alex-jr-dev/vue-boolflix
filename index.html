@@ -4,8 +4,13 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <link rel="stylesheet" href="css/flag.css" />
     <title>BoolFlix</title>
   </head>
   <body>
@@ -16,19 +21,25 @@
       </div>
 
       <ul>
-        <h3>Movies</h3>
-        <li v-for="movie in moviesList">
+        <li v-for="movie in fullList">
+          <img
+            v-if="movie.poster_path"
+            :src="movie.poster_path"
+            alt="Cover cover"
+          />
           <p>Titolo: {{movie.title}}</p>
           <p>Titolo originale: {{movie.original_title}}</p>
-          <p>Lingua originale: {{movie.original_language}}</p>
-          <p>Media voti: {{movie.vote_average}}</p>
-        </li>
-        <h3>Tv Series</h3>
-        <li v-for="tvSerie in tvSeriesList">
-          <p>Titolo: {{tvSerie.title}}</p>
-          <p>Titolo originale: {{tvSerie.original_title}}</p>
-          <p>Lingua originale: {{tvSerie.original_language}}</p>
-          <p>Media voti: {{tvSerie.vote_average}}</p>
+          <p>
+            Lingua originale:
+            <span :class="`flag-icon flag-icon-${getFlags()}`"></span>
+          </p>
+          <p>Media voti:</p>
+          <div>
+            <span v-for="value in 5">
+              <i v-if="value <= movie.vote_average" class="fas fa-star"></i>
+              <i v-else class="far fa-star"></i>
+            </span>
+          </div>
         </li>
       </ul>
     </div>
