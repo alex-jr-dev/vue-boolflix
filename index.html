@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12/dist/vue.js"></script>
+    <title>BoolFlix</title>
+  </head>
+  <body>
+    <div id="app">
+      <div>
+        <input type="text" v-model="userInput" />
+        <button @click="doSearch">Cerca</button>
+      </div>
+
+      <ul>
+        <h3>Movies</h3>
+        <li v-for="movie in moviesList">
+          <p>Titolo: {{movie.title}}</p>
+          <p>Titolo originale: {{movie.original_title}}</p>
+          <p>Lingua originale: {{movie.original_language}}</p>
+          <p>Media voti: {{movie.vote_average}}</p>
+        </li>
+        <h3>Tv Series</h3>
+        <li v-for="tvSerie in tvSeriesList">
+          <p>Titolo: {{tvSerie.title}}</p>
+          <p>Titolo originale: {{tvSerie.original_title}}</p>
+          <p>Lingua originale: {{tvSerie.original_language}}</p>
+          <p>Media voti: {{tvSerie.vote_average}}</p>
+        </li>
+      </ul>
+    </div>
+    <script src="scripts/app.js"></script>
+  </body>
+</html>
