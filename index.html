@@ -27,56 +27,50 @@
   </head>
   <body>
     <div id="app">
-      <div class="container">
-        <nav class="navbar fixed-top">
-          <div class="container-fluid">
-            <img src="img/netflix.png" alt="Netflix Logo" />
-            <form class="d-flex" @submit.prevent="doSearch">
-              <input
-                class="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-                v-model="userInput"
-              />
-              <button class="btn btn-outline-danger" type="submit">
-                Cerca
-              </button>
-            </form>
-          </div>
-        </nav>
+      <nav class="navbar fixed-top">
+        <div class="container-fluid">
+          <img class="navbar-brand" src="img/netflix.png" alt="Netflix Logo" />
 
-        <div class="wrapper-film d-flex">
-          <ul class="d-flex">
-            <li v-for="movie in fullList">
-              <img
-                v-if="movie.poster_path"
-                :src="movie.poster_path"
-                alt="Cover cover"
-              />
-              <div class="wrapper-info">
-                <p>Titolo: {{movie.title}}</p>
-                <p>Titolo originale: {{movie.original_title}}</p>
-                <p>
-                  Lingua originale:
-                  <span
-                    :class="`flag-icon flag-icon-${getFlags(movie)}`"
-                  ></span>
-                </p>
-                <p>Media voti:</p>
-                <div>
-                  <span v-for="value in 5">
-                    <i
-                      v-if="value <= movie.vote_average"
-                      class="fas fa-star"
-                    ></i>
-                    <i v-else class="far fa-star"></i>
-                  </span>
-                </div>
-              </div>
-            </li>
-          </ul>
+          <form class="d-flex" @submit.prevent="doSearch">
+            <input
+              class="form-control me-2"
+              type="search"
+              placeholder="Search"
+              aria-label="Search"
+              v-model="userInput"
+            />
+            <button class="btn btn-outline-danger" type="submit">Cerca</button>
+          </form>
         </div>
+      </nav>
+
+      <div class="wrapper-film">
+        <h2>Film / Serie Tv</h2>
+        <ul class="d-flex">
+          <li v-for="(movie,index) in fullList">
+            <img
+              v-if="movie.poster_path"
+              :src="movie.poster_path"
+              alt="Cover
+            cover"
+            />
+            <div class="wrapper-info">
+              <p>Titolo: {{movie.title}}</p>
+              <p>Titolo originale: {{movie.original_title}}</p>
+              <p>
+                Lingua originale:
+                <span :class="`flag-icon flag-icon-${getFlags(movie)}`"></span>
+              </p>
+              <p>Media voti:</p>
+              <div>
+                <span v-for="value in 5">
+                  <i v-if="value <= movie.vote_average" class="fas fa-star"></i>
+                  <i v-else class="far fa-star"></i>
+                </span>
+              </div>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
     <script src="scripts/app.js"></script>
