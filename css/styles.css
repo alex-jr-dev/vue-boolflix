@@ -1,0 +1,33 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: rgba(0, 0, 0, 0.9);
+  font-family: "Open Sans", sans-serif;
+  color: white;
+}
+
+.navbar img {
+  width: 180px;
+}
+
+.wrapper-film ul {
+  list-style: none;
+  padding-left: 0.5rem;
+}
+
+.wrapper-film img,
+.wrapper-info {
+  width: 200px;
+}
+
+.wrapper-film li {
+  padding: 10px 20px;
+}
+
+.wrapper-info p {
+  margin: 8px 0;
+}
