@@ -20,6 +20,15 @@ new Vue({
     userInput: "",
     moviesList: [],
     tvSeriesList: [],
+    movieGenres: [],
+    tvGenres: [],
+    genreFilter: "",
+    recentlyViewed: [],
+  },
+
+  mounted() {
+    this.loadGenres("movie");
+    this.loadGenres("tv");
   },
   methods: {
     makeAxiosSearch(searchType) {
@@ -40,6 +49,7 @@ new Vue({
             this.tvSeriesList = resp.data.results.map((tvShow) => {
               tvShow.original_title = tvShow.original_name;
               tvShow.title = tvShow.name;
+              tvShow.isSeries = true;
 
               return tvShow;
             });
@@ -72,20 +82,97 @@ new Vue({
 
       return candidatesCountries[0];
     },
+    callCast(movie) {
+      if (movie.castList) {
+        return;
+      }
+      const axiosOptions = {
+        params: {
+          api_key: this.tmdbKey,
+          language: "it-IT",
+        },
+      };
+
+      const type = movie.isSeries ? "tv" : "movie";
+
+      axios
+        .get(
+          `https://api.themoviedb.org/3/${type}/${movie.id}/credits`,
+          axiosOptions
+        )
+        .then((resp) => {
+          movie.castList = resp.data.cast
+            .slice(0, 5)
+            .map((item) => item.original_name);
+
+          this.$forceUpdate();
+        });
+    },
+    loadGenres(type) {
+      const axiosOptions = {
+        params: {
+          api_key: this.tmdbKey,
+          language: "it-IT",
+        },
+      };
+
+      axios
+        .get(`https://api.themoviedb.org/3/genre/${type}/list`, axiosOptions)
+        .then((resp) => {
+          if (type === "movie") {
+            this.movieGenres = resp.data.genres;
+          } else {
+            this.tvGenres = resp.data.genres;
+          }
+        });
+    },
+    addToRecentlyViewed(currentMovie) {
+      if (this.recentlyViewed.includes(currentMovie)) {
+        return;
+      }
+      this.recentlyViewed.push(currentMovie);
+    },
   },
   computed: {
     fullList() {
-      return [...this.moviesList, ...this.tvSeriesList].map((item) => {
-        let poster = false;
-        if (item.poster_path) {
-          poster = `https://image.tmdb.org/t/p/w500${item.poster_path}`;
-        }
-        return {
-          ...item,
-          poster_path: poster,
-          vote_average: Math.round(item.vote_average / 2),
-        };
-      });
+      return [...this.moviesList, ...this.tvSeriesList]
+        .map((item) => {
+          let poster = false;
+          if (item.poster_path) {
+            poster = `https://image.tmdb.org/t/p/w500${item.poster_path}`;
+          }
+          return {
+            ...item,
+            poster_path: poster,
+            vote_average: Math.round(item.vote_average / 2),
+
+            genres: item.genre_ids.map((id) => {
+              const genres = item.isSeries ? this.tvGenres : this.movieGenres;
+              return genres.find((genre) => genre.id === id).name;
+            }),
+          };
+        })
+        .filter((item) => {
+          if (!this.genreFilter) {
+            return true;
+          }
+          return item.genre_ids.includes(this.genreFilter);
+        });
+    },
+    allGenres() {
+      return [...this.movieGenres, ...this.tvGenres]
+        .filter((genre, index, self) => {
+          return index === self.findIndex((i) => i.id === genre.id);
+        })
+        .sort((a, b) => {
+          if (a.name.toLowerCase() < b.name.toLowerCase()) {
+            return -1;
+          }
+          if (a.name.toLowerCase() > b.name.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        });
     },
   },
 });

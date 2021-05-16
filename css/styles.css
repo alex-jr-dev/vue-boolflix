@@ -62,4 +62,28 @@ body {
   background-color: rgba(0, 0, 0, 0.9);
   box-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
   cursor: pointer;
+  overflow: auto;
+}
+
+.wrapper-title {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.wrapper-film h2 {
+  margin-bottom: 0px;
+}
+
+.wrapper-film select {
+  border-radius: 15px;
+  margin-left: 10px;
+}
+
+.wrapper-film select:hover {
+  border: 1px solid red;
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.6);
+}
+
+.wrapper-film select:focus {
+  outline: none;
 }

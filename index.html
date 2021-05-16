@@ -30,7 +30,6 @@
       <nav class="navbar fixed-top">
         <div class="container-fluid">
           <img class="navbar-brand" src="img/netflix.png" alt="Netflix Logo" />
-
           <form class="d-flex" @submit.prevent="doSearch">
             <input
               class="form-control me-2"
@@ -45,9 +44,21 @@
       </nav>
 
       <div class="wrapper-film">
-        <h2>Film / Serie Tv</h2>
+        <div class="wrapper-title">
+          <h2>Film / Serie Tv</h2>
+          <select name="" id="" v-model="genreFilter">
+            <option value="">Tutti</option>
+            <option :value="genre.id" v-for="genre in allGenres">
+              {{genre.name}}
+            </option>
+          </select>
+        </div>
         <ul class="d-flex">
-          <li v-for="(movie,index) in fullList">
+          <li
+            v-for="movie in fullList"
+            @mouseenter="callCast(movie)"
+            @click="addToRecentlyViewed(movie)"
+          >
             <img
               v-if="movie.poster_path"
               :src="movie.poster_path"
@@ -57,6 +68,46 @@
             <div class="wrapper-info">
               <p>Titolo: {{movie.title}}</p>
               <p>Titolo originale: {{movie.original_title}}</p>
+              <p v-if="movie.castList && movie.castList.length > 0">
+                Cast: {{movie.castList.join(', ')}}
+              </p>
+              <p v-if="movie.genres && movie.genres.length > 0">
+                Generi: {{movie.genres.join(', ')}}
+              </p>
+              <p>
+                Lingua originale:
+                <span :class="`flag-icon flag-icon-${getFlags(movie)}`"></span>
+              </p>
+              <p>Media voti:</p>
+              <div>
+                <span v-for="value in 5">
+                  <i v-if="value <= movie.vote_average" class="fas fa-star"></i>
+                  <i v-else class="far fa-star"></i>
+                </span>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <div class="wrapper-title">
+          <h2>Visti di Recente</h2>
+        </div>
+        <ul class="d-flex">
+          <li v-for="movie in recentlyViewed">
+            <img
+              v-if="movie.poster_path"
+              :src="movie.poster_path"
+              alt="Cover
+          cover"
+            />
+            <div class="wrapper-info">
+              <p>Titolo: {{movie.title}}</p>
+              <p>Titolo originale: {{movie.original_title}}</p>
+              <p v-if="movie.castList && movie.castList.length > 0">
+                Cast: {{movie.castList.join(', ')}}
+              </p>
+              <p v-if="movie.genres && movie.genres.length > 0">
+                Generi: {{movie.genres.join(', ')}}
+              </p>
               <p>
                 Lingua originale:
                 <span :class="`flag-icon flag-icon-${getFlags(movie)}`"></span>
