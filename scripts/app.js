@@ -134,8 +134,13 @@ new Vue({
             this.$set(item, "active", false),
             (item.typeGenres = item.genre_ids.map((id) => {
               const genres = item.isSeries ? this.tvGenres : this.movieGenres;
-              return genres.find((genre) => genre.id === id).name;
-            }));
+
+              const genresVar = genres.find((genre) => genre.id === id).name;
+
+              return genresVar;
+            }))
+              .filter((g) => g !== undefined)
+              .map((g) => g.name);
           return item;
         })
         .filter((item) => {
@@ -143,21 +148,6 @@ new Vue({
             return true;
           }
           return item.genre_ids.includes(this.genreFilter);
-        });
-    },
-    allGenres() {
-      return [...this.movieGenres, ...this.tvGenres]
-        .filter((genre, index, self) => {
-          return index === self.findIndex((i) => i.id === genre.id);
-        })
-        .sort((a, b) => {
-          if (a.name.toLowerCase() < b.name.toLowerCase()) {
-            return -1;
-          }
-          if (a.name.toLowerCase() > b.name.toLowerCase()) {
-            return 1;
-          }
-          return 0;
         });
     },
     preferList() {

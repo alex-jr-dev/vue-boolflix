@@ -48,7 +48,10 @@
           <h2>Film / Serie Tv</h2>
           <select name="" id="" v-model="genreFilter">
             <option value="">Tutti</option>
-            <option :value="genre.id" v-for="genre in allGenres">
+            <option
+              :value="genre.id"
+              v-for="genre in movieGenres.concat(tvGenres)"
+            >
               {{genre.name}}
             </option>
           </select>
