@@ -31,7 +31,6 @@ new Vue({
     tvGenres: [],
     genreFilter: "",
     recentlyViewed: [],
-    preferList: [],
     coverNull: "img/nocover.png",
   },
 
@@ -65,7 +64,9 @@ new Vue({
           }
         });
     },
-
+    onClickPref(currentMovie) {
+      currentMovie.active = !currentMovie.active;
+    },
     doSearch() {
       this.makeAxiosSearch("movie");
       this.makeAxiosSearch("tv");
@@ -114,14 +115,6 @@ new Vue({
           }
         });
     },
-    // FIXME:
-    onClickPref(currentMovie) {
-      currentMovie.active = !currentMovie.active;
-      if (this.preferList.includes(currentMovie)) {
-        return;
-      }
-      this.preferList.push(currentMovie);
-    },
   },
   computed: {
     fullList() {
@@ -166,6 +159,9 @@ new Vue({
           }
           return 0;
         });
+    },
+    preferList() {
+      return this.fullList.filter((movie) => movie.active);
     },
   },
 });
