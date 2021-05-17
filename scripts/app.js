@@ -13,9 +13,16 @@
 // - Trasformiamo poi il voto da 1 a 10 decimale in un numero intero da 1 a 5, così da permetterci di stampare a schermo un numero di stelle piene che vanno da 1 a 5, lasciando le restanti vuote (troviamo le icone in FontAwesome).
 // Arrotondiamo sempre per eccesso all’unità successiva, non gestiamo icone mezze piene (o mezze vuote :P) -> DONE
 
+// 5 - Partendo da un film o da una serie, richiedere all'API quali sono gli attori che fanno parte del cast aggiungendo alla nostra scheda Film / Serie SOLO i primi 5 restituiti dall’API con Nome e Cognome, e i generi associati al film con questo schema: “Genere 1, Genere 2, ...”. -> DONE
+
+// 6 - Creare una lista di generi richiedendo quelli disponibili all'API e creare dei filtri con i generi tv e movie per mostrare/nascondere le schede ottenute con la ricerca. -> DONE
+
 new Vue({
   el: "#app",
   data: {
+    flags: {
+      en: "us",
+    },
     tmdbKey: "e380019cdd166485d52e54e8f1d2dc20",
     userInput: "",
     moviesList: [],
@@ -24,6 +31,8 @@ new Vue({
     tvGenres: [],
     genreFilter: "",
     recentlyViewed: [],
+    preferList: [],
+    coverNull: "img/nocover.png",
   },
 
   mounted() {
@@ -61,27 +70,6 @@ new Vue({
       this.makeAxiosSearch("movie");
       this.makeAxiosSearch("tv");
     },
-
-    getFlags(currentMovie) {
-      const lang2country = {
-        en: ["us"],
-        it: ["it"],
-        es: ["es"],
-        fr: ["fr"],
-        de: ["de"],
-        ru: ["ru"],
-      };
-
-      const fallbackFlag = "null";
-
-      const queryLang = currentMovie.original_language;
-
-      const candidatesCountries = lang2country[queryLang]
-        ? lang2country[queryLang]
-        : [fallbackFlag];
-
-      return candidatesCountries[0];
-    },
     callCast(movie) {
       if (movie.castList) {
         return;
@@ -101,11 +89,11 @@ new Vue({
           axiosOptions
         )
         .then((resp) => {
-          movie.castList = resp.data.cast
-            .slice(0, 5)
-            .map((item) => item.original_name);
-
-          this.$forceUpdate();
+          this.$set(
+            movie,
+            "castList",
+            resp.data.cast.slice(0, 5).map((item) => item.original_name)
+          );
         });
     },
     loadGenres(type) {
@@ -126,31 +114,36 @@ new Vue({
           }
         });
     },
-    addToRecentlyViewed(currentMovie) {
-      if (this.recentlyViewed.includes(currentMovie)) {
+    // FIXME:
+    onClickPref(currentMovie) {
+      currentMovie.active = !currentMovie.active;
+      if (this.preferList.includes(currentMovie)) {
         return;
       }
-      this.recentlyViewed.push(currentMovie);
+      this.preferList.push(currentMovie);
     },
   },
   computed: {
     fullList() {
-      return [...this.moviesList, ...this.tvSeriesList]
+      return this.moviesList
+        .concat(this.tvSeriesList)
         .map((item) => {
           let poster = false;
           if (item.poster_path) {
             poster = `https://image.tmdb.org/t/p/w500${item.poster_path}`;
+          } else {
+            poster = this.coverNull;
           }
-          return {
-            ...item,
-            poster_path: poster,
-            vote_average: Math.round(item.vote_average / 2),
-
-            genres: item.genre_ids.map((id) => {
+          (item.country =
+            this.flags[item.original_language] || item.original_language),
+            (item.poster = poster),
+            (item.vote = Math.round(item.vote_average / 2)),
+            (item.active = false),
+            (item.typeGenres = item.genre_ids.map((id) => {
               const genres = item.isSeries ? this.tvGenres : this.movieGenres;
               return genres.find((genre) => genre.id === id).name;
-            }),
-          };
+            }));
+          return item;
         })
         .filter((item) => {
           if (!this.genreFilter) {
