@@ -131,7 +131,7 @@ new Vue({
             this.flags[item.original_language] || item.original_language),
             (item.poster = poster),
             (item.vote = Math.round(item.vote_average / 2)),
-            (item.active = false),
+            this.$set(item, "active", false),
             (item.typeGenres = item.genre_ids.map((id) => {
               const genres = item.isSeries ? this.tvGenres : this.movieGenres;
               return genres.find((genre) => genre.id === id).name;
